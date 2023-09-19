@@ -1,5 +1,7 @@
 package bo;
 
+import java.io.Console;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -17,26 +19,46 @@ public class GiayBo {
 		return dsg;
 	}
 	
-	public int Them(int maGiay, String TenGiay, int Size, Float Gia, int maLoaiGiay,int maNhanVien)throws Exception {
-		
-//		System.out.print(dsnv.get(MaNhanVien));
+	public int Them(String maGiay, String TenGiay, int maLoaiGiay,String hangGiay, int Size, Float Gia,
+			Date NgaySanXuat,String maNhanVien,String trangThai)throws Exception {
+
 		for(Giay g : dsg) {
-			if(g.getMaNhanVien()==maGiay) 
+			if(g.getMaNhanVien()==maGiay )
 				return 0;
 		}
-		dsg.add(new Giay(maGiay,TenGiay,Size,Gia,maLoaiGiay,maNhanVien));
+		dsg.add(new Giay(maGiay,TenGiay,maLoaiGiay,hangGiay,Size,Gia,NgaySanXuat,maNhanVien,trangThai));
 		return gdao.Them(maGiay,TenGiay,Size,Gia,maLoaiGiay,maNhanVien);
 	}
-	public int Sua(int maGiay, String TenGiay, int Size, Float Gia, int maLoaiGiay,int maNhanVien)throws Exception {
+	public int Sua(String maGiay, String TenGiay, int maLoaiGiay,String hangGiay, int Size, Float Gia,
+			Date NgaySanXuat,String maNhanVien,String trangThai)throws Exception {
 		for(Giay g: dsg) {
-			if(g.getMaGiay()==maGiay) {
-				g.setTenGiay(TenGiay);
-				g.setSize(Size);
-				g.setGia(Gia);
-				g.setMaLoaiGiay(maLoaiGiay);
-				g.setMaNhanVien(maNhanVien);
-				return gdao.Sua(maGiay, TenGiay, Size, Gia, maLoaiGiay, maNhanVien);
+			String[] DinhDang= maGiay.split("_");
+			try {
+				if(DinhDang[0].toString()=="Giay" 
+				   && Integer.parseInt(DinhDang[1]) >0 
+				   &&Integer.parseInt(DinhDang[1]) >10)
+					if(g.getMaGiay()==maGiay) {
+						g.setTenGiay(TenGiay);
+						g.setMaLoaiGiay(maLoaiGiay);
+						g.setHangGiay(hangGiay);
+						g.setSize(Size);
+						g.setGia(Gia);
+						g.setNgaySanXuat(NgaySanXuat);
+						g.setMaNhanVien(maNhanVien);
+						
+						if(NgaySanXuat.before(2020)){
+							g.setTrangThai("Sale 20%");
+						}
+						return gdao.Sua(maGiay,TenGiay, maLoaiGiay,hangGiay,Size, Gia,
+								NgaySanXuat,maNhanVien, trangThai);
+					}
+					else {
+						return 0;
+					}
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
+					
 		}
 		return 0;
 	}
